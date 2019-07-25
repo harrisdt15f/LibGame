@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\Lotto\EM;
 
 use App\Lib\Game\Method\Lotto\Base;
+use Illuminate\Support\Facades\Validator;
 
 class LTQ2ZX2_S extends Base
 {
@@ -22,32 +23,14 @@ class LTQ2ZX2_S extends Base
 
     public function regexp($sCodes)
     {
-        //格式
-        if (!preg_match("/^(((0[1-9]\s)|(1[01]\s))((0[1-9])|(1[01]))\,)*(((0[1-9]\s)|(1[01]\s))((0[1-9])|(1[01])))$/", $sCodes)) {
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(((?!.*\d{3,}$)(?!\|)(?!.*\|$)(?! )(?!.* $)((0[1-9]|1[0-1]) ?){2})\|?)*$/'],//2码
+            //'01 02|01 02|01 02|。。。'  十一选五单式
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        $aCode = explode(",",$sCodes);
-
-        //去重
-        if(count($aCode) != count(array_filter(array_unique($aCode)))) return true;
-
-        //校验
-        foreach ($aCode as $sTmpCode) {
-            $aTmpCode = explode(" ", $sTmpCode);
-            if (count($aTmpCode) != 2) {
-                return false;
-            }
-            if (count($aTmpCode) != count(array_filter(array_unique($aTmpCode)))) {
-                return false;
-            }
-            foreach ($aTmpCode as $c) {
-                if (!isset(self::$filterArr[$c])) {
-                    return false;
-                }
-            }
-        }
-
         return true;
     }
 
