@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\Lotto\SM;
 
 use App\Lib\Game\Method\Lotto\Base;
+use Illuminate\Support\Facades\Validator;
 
 
 class LTQ3ZX3_S extends Base
@@ -22,38 +23,20 @@ class LTQ3ZX3_S extends Base
         return implode(',',explode('|',$codes));
     }
 
+    /**
+     * @param $sCodes
+     * @return bool
+     */
     public function regexp($sCodes)
     {
-        //格式
-//        if (!preg_match("/^(((0[1-9]\s)|(1[01]\s)){2}((0[1-9])|(1[01]))\,)*(((0[1-9]\s)|(1[01]\s)){2}((0[1-9])|(1[01])))$/", $sCodes)) {
-//            return false;
-//        }
-
-        $aCode = explode(",", $sCodes);
-
-        //去重
-        if(count($aCode) != count(array_filter(array_unique($aCode)))) return false;
-
-        //校验
-        foreach ($aCode as $sTmpCode) {
-            if (!preg_match("/^((0[1-9]\s)|(1[01]\s)){2}((0[1-9])|(1[01]))$/", $sTmpCode)) {
-                return false;
-            }
-
-            $aTmpCode = explode(" ", $sTmpCode);
-            if (count($aTmpCode) != 3) {
-                return false;
-            }
-            if (count($aTmpCode) != count(array_filter(array_unique($aTmpCode)))) {
-                return false;
-            }
-            foreach ($aTmpCode as $c) {
-                if (!isset(self::$filterArr[$c])) {
-                    return false;
-                }
-            }
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(((?!.*\d{3,}$)(?!\|)(?!.*\|$)(?! )(?!.* $)((0[1-9]|1[0-1]) ?){1,11})\|?)*$/'],
+            //'01|01 02 03 04 05 06 07 08 09 10 11|01 02 03 04 05 06 07 08 09 10 11|。。。'  十一选五单式
+        ]);
+        if ($validator->fails()) {
+            return false;
         }
-
         return true;
     }
 
