@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\Ssc\EX;
 
 use App\Lib\Game\Method\Ssc\Base;
+use Illuminate\Support\Facades\Validator;
 
 class HZU2_S extends Base
 {
@@ -25,31 +26,14 @@ class HZU2_S extends Base
 
     public function regexp($sCodes)
     {
-        //格式
-        if (!preg_match("/^(([0-9]{2}\,)*[0-9]{2})$/", $sCodes)) {
+        $data['code'] = explode('|', $sCodes);
+        $validator = Validator::make($data, [
+            'code' => 'required|array|max:100000',//只能十万个号码能传过来
+            'code.*' => ['regex:/^(?!\&)(?!.*\&$)(?!.*?\&\&)(\d&?){2}?$/'],//0&1
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        //重复号码
-        $temp =explode(",",$sCodes);
-        $i = count(array_filter(array_unique($temp)));
-        if($i != count($temp)) return false;
-
-        //对子号
-        $exists=[];
-        $dzArr = self::$dzArr;
-        foreach($temp as $c){
-            if(isset($dzArr[$c])){
-                //不包含对子号
-                return false;
-            }
-
-            //组选不能重复号码
-            $vv=$this->strOrder($c);
-            if(isset($exists[$vv])) return false;
-            $exists[$vv]=1;
-        }
-
         return true;
     }
 
