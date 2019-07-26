@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\Lotto\RXDS;
 
 use App\Lib\Game\Method\Lotto\Base;
+use Illuminate\Support\Facades\Validator;
 
 class LTRX8_S extends Base
 {
@@ -22,33 +23,23 @@ class LTRX8_S extends Base
 
     public function regexp($sCodes)
     {
-        $aCode = explode(",",$sCodes);
-
-        //去重
-        if(count($aCode) != count(array_filter(array_unique($aCode)))) return true;
-
-        //校验
-        foreach ($aCode as $sTmpCode) {
-            $aTmpCode = explode(" ", $sTmpCode);
-            if (count($aTmpCode) != 8) {
-                return false;
-            }
-            if (count($aTmpCode) != count(array_filter(array_unique($aTmpCode)))) {
-                return false;
-            }
-            foreach ($aTmpCode as $c) {
-                if (!isset(self::$filterArr[$c])) {
-                    return false;
-                }
-            }
+        $no = 8;
+        $pattern = '/^(((?!.*\d{3,}$)(?!\|)(?!.*\|$)(?! )(?!.* $)((0[1-9]|1[0-1]) ?){~no~})\|?)*$/';
+        $regex = str_replace('~no~', $no, $pattern);
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:'.$regex],//5码
+            //'01 02 03 04 05 06 07 08|。。。'  十一选五 任选单式八中五
+        ]);
+        if ($validator->fails()) {
+            return false;
         }
-
         return true;
     }
 
     public function count($sCodes)
     {
-        return count(explode(",",$sCodes));
+        return count(explode(',',$sCodes));
     }
 
     //判定中奖

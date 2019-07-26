@@ -1,64 +1,68 @@
 <?php namespace App\Lib\Game\Method\Lotto\RXDS;
 
 use App\Lib\Game\Method\Lotto\Base;
+use Illuminate\Support\Facades\Validator;
 
 class LTRX1_S extends Base
 {
     // 01 02,01 02,01 02,01 02
 
-    public static $filterArr = array('01'=>1, '02'=>1, '03'=>1, '04'=>1, '05'=>1, '06'=>1, '07'=>1, '08'=>1, '09'=>1, '10'=>1, '11'=>1);
+    public static $filterArr = array(
+        '01' => 1,
+        '02' => 1,
+        '03' => 1,
+        '04' => 1,
+        '05' => 1,
+        '06' => 1,
+        '07' => 1,
+        '08' => 1,
+        '09' => 1,
+        '10' => 1,
+        '11' => 1
+    );
 
     //供测试用 生成随机投注
     public function randomCodes()
     {
-        $rand=1;
-        return implode(' ',(array)array_rand(self::$filterArr,$rand));
+        $rand = 1;
+        return implode(' ', (array)array_rand(self::$filterArr, $rand));
     }
 
     public function fromOld($codes)
     {
-        return implode(',',explode('|',$codes));
+        return implode(',', explode('|', $codes));
     }
 
     public function regexp($sCodes)
     {
-        //格式
-        $aCode = explode(",",$sCodes);
-
-        //去重
-        if(count($aCode) != count(array_filter(array_unique($aCode)))) return true;
-
-        //校验
-        foreach ($aCode as $sTmpCode) {
-            $aTmpCode = explode(" ", $sTmpCode);
-            if (count($aTmpCode) != 1) {
-                return false;
-            }
-            if (count($aTmpCode) != count(array_filter(array_unique($aTmpCode)))) {
-                return false;
-            }
-            foreach ($aTmpCode as $c) {
-                if (!isset(self::$filterArr[$c])) {
-                    return false;
-                }
-            }
+        $no = 1;
+        $pattern = '/^(((?!.*\d{3,}$)(?!\|)(?!.*\|$)(?! )(?!.* $)((0[1-9]|1[0-1]) ?){~no~})\|?)*$/';
+        $regex = str_replace('~no~', $no, $pattern);
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:'.$regex],//1码
+            //'01|02|03|。。。'  十一选五 任选单式一中一
+        ]);
+        if ($validator->fails()) {
+            return false;
         }
-
         return true;
     }
 
     public function count($sCodes)
     {
-        return count(explode(",",$sCodes));
+        return count(explode(",", $sCodes));
     }
 
     //判定中奖
     public function assertLevel($levelId, $sCodes, Array $numbers)
     {
-        $aCodes = explode(',',$sCodes);
-        $i=0;
+        $aCodes = explode(',', $sCodes);
+        $i = 0;
         foreach ($aCodes as $code) {
-            if(count(array_intersect(explode(' ',$code),$numbers)) >=1 ) $i++;
+            if (count(array_intersect(explode(' ', $code), $numbers)) >= 1) {
+                $i++;
+            }
         }
 
         return $i;
@@ -66,29 +70,29 @@ class LTRX1_S extends Base
 
 
     //检查封锁
-    public function tryLockScript($sCodes,$plan,$prizes,$lockvalue)
+    public function tryLockScript($sCodes, $plan, $prizes, $lockvalue)
     {
         //01&03&04&05
         $aCodes = explode(',', $sCodes);
-        $codes=[];
-        foreach($aCodes as $c){
-            $c=explode(' ',$c);
-            $codes[]="{'".implode("','",$c)."'}";
+        $codes = [];
+        foreach ($aCodes as $c) {
+            $c = explode(' ', $c);
+            $codes[] = "{'".implode("','", $c)."'}";
         }
 
-        if(count($codes)){
-            $codes=implode(",",$codes);
-        }else{
-            $codes='';
+        if (count($codes)) {
+            $codes = implode(",", $codes);
+        } else {
+            $codes = '';
         }
 
-        $script=
+        $script =
             <<<LUA
 
 LUA;
 
-        $max=$lockvalue-$prizes[1];
-        $script.= <<<LUA
+        $max = $lockvalue - $prizes[1];
+        $script .= <<<LUA
 
 exists=cmd('exists','{$plan}')
 
@@ -139,25 +143,25 @@ LUA;
     }
 
     //写入封锁值
-    public function lockScript($sCodes,$plan,$prizes)
+    public function lockScript($sCodes, $plan, $prizes)
     {
         //01&03&04&05
         $aCodes = explode(',', $sCodes);
-        $codes=[];
-        foreach($aCodes as $c){
-            $c=explode(' ',$c);
-            $codes[]="{'".implode("','",$c)."'}";
+        $codes = [];
+        foreach ($aCodes as $c) {
+            $c = explode(' ', $c);
+            $codes[] = "{'".implode("','", $c)."'}";
         }
 
-        if(count($codes)){
-            $codes=implode(",",$codes);
-        }else{
-            $codes='';
+        if (count($codes)) {
+            $codes = implode(",", $codes);
+        } else {
+            $codes = '';
         }
 
-        $script='';
+        $script = '';
         //不同奖级的中奖金额
-        $script.= <<<LUA
+        $script .= <<<LUA
 
 x={'01','02','03','04','05','06','07','08','09','10','11'}
 codes={{$codes}}
