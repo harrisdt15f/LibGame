@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\Lotto\QW;
 
 use App\Lib\Game\Method\Lotto\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 猜中位
 class LTCZW extends Base
@@ -22,24 +23,16 @@ class LTCZW extends Base
 
     public function regexp($sCodes)
     {
-        //格式
-        if (!preg_match("/^(([0-9]&)*[0-9])$/", $sCodes)) {
+        $regex = '/^(?! )(?!.* $)(((0[3-9]))|((0[3-9]) ?)){1,7}$/';
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:'.$regex],//1码
+            //'03 04 05 06 07 08 09'  十一选五 猜中位 趣味
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        //去重
-        $t=explode("&",$sCodes);
-        $filterArr = self::$filterArr;
-
-        $temp = array_filter(array_unique($t),function($v) use ($filterArr) {
-            return isset($filterArr[$v]);
-        });
-
-        if(count($temp)==0){
-            return false;
-        }
-
-        return count($temp) == count($t);
+        return true;
     }
 
     public function count($sCodes)
