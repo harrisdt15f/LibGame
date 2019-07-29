@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\Lotto\QW;
 
 use App\Lib\Game\Method\Lotto\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 定单双
 class LTDDS extends Base
@@ -39,24 +40,16 @@ class LTDDS extends Base
 
     public function regexp($sCodes)
     {
-        // 格式
-        if (!preg_match("/^(([0-9]&)*[0-9])$/", $sCodes)) {
+        $regex = '/^((?! )(?!.*  $)(?!.* $)(([0-5]) ?){1,6})*$/';
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:'.$regex],//1码
+            //'0 1 2 3 4 5'  十一选五 定单双 趣味
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        // 去重
-        $t = explode("&", $sCodes);
-        $filterArr = self::$filterArr;
-
-        $temp = array_filter(array_unique($t), function ($v) use ($filterArr) {
-            return isset($filterArr[$v]);
-        });
-
-        if (count($temp) == 0) {
-            return false;
-        }
-
-        return count($temp) == count($t);
+        return true;
     }
 
     public function count($sCodes)
