@@ -1,9 +1,10 @@
 <?php namespace App\Lib\Game\Method\K3\DXDS;
 
 use App\Lib\Game\Method\K3\Base;
+use Illuminate\Support\Facades\Validator;
 
 //
-class K3HZDXDS extends Base
+class KSHZDXDS extends Base
 {
     //大小单双
     //b&s&a&d
@@ -42,24 +43,19 @@ class K3HZDXDS extends Base
 
     public function regexp($sCodes)
     {
-        $regexp = '/^([bsad]&){0,3}[bsad]$/';
-
-        if(!preg_match($regexp,$sCodes)) return false;
-
-        $filterArr = self::$dxds;
-
-
-        $temp = explode('&', $sCodes);
-        if(count($temp) != count(array_filter(array_unique($temp),function($v) use($filterArr) {
-                return isset($filterArr[$v]);
-            }))) return false;
-
-        return !(count($temp) == 0);
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(?!\|)(?!.*\|\|$)(?!.*\|$)(([0-3])\|?){1,4}$/'],//1|0|3|2 大小单双
+        ]);
+        if ($validator->fails()) {
+            return false;
+        }
+        return true;
     }
 
     public function count($sCodes)
     {
-        $count = count(explode("&", $sCodes));
+        $count = count(explode('&', $sCodes));
         return $count;
     }
 
@@ -92,7 +88,7 @@ class K3HZDXDS extends Base
     public function assertLevel($levelId, $sCodes, Array $numbers)
     {
         // 投注内容
-        $aCodes = explode("&", $sCodes);
+        $aCodes = explode('&', $sCodes);
 
         // 开奖内容
         $number = array_sum($numbers);
