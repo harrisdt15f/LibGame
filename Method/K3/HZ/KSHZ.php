@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\K3\HZ;
 
 use App\Lib\Game\Method\K3\Base;
+use Illuminate\Support\Facades\Validator;
 
 //快三和值
 class KSHZ extends Base
@@ -43,20 +44,14 @@ class KSHZ extends Base
     }
     public function regexp($sCodes)
     {
-        //去重
-        $t=explode("&",$sCodes);
-        $temp =array_unique($t);
-        $arr = self::$filterArr;
-
-        $temp = array_filter($temp,function($v) use ($arr) {
-            return isset($arr[$v]);
-        });
-
-        if(count($temp)==0){
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(?!\|)(?!.*\|\|$)(?!.*\|$)(((1?[0-8]){2}|([3-9]))\|?){1,16}$/'],//3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18 和值快三
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        return count($temp) == count($t);
+        return true;
     }
 
     public function count($sCodes)
