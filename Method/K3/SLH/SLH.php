@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\K3\SLH;
 
 use App\Lib\Game\Method\K3\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 三连号
 class SLH extends Base
@@ -33,8 +34,14 @@ class SLH extends Base
 
     public function regexp($sCodes)
     {
-        //去重
-        return $sCodes =='t';
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(?!\|)(?!.*\|\|$)(?!.*\|$)((123|234|345|456)\|?)*$/'],//123|234|345|456 3连号快三
+        ]);
+        if ($validator->fails()) {
+            return false;
+        }
+        return true;
     }
 
     public function count($sCodes)
