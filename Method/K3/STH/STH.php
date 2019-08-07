@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\K3\STH;
 
 use App\Lib\Game\Method\K3\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 三同号
 class STH extends Base
@@ -36,24 +37,13 @@ class STH extends Base
 
     public function regexp($sCodes)
     {
-        if (!preg_match("/^(([1-6]&){0,5}[1-6])$/", $sCodes)) {
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(?!\|)(?!.*\|\|$)(?!.*\|$)((([1]{3})|([2]{3})|([3]{3})|([4]{3})|([5]{3})|([6]{3}))\|?)*$/'],//111|222|333|444|555|666 3同号快三
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        $t = explode('&',$sCodes);
-        $temp=array_unique($t);
-
-        $filterArr = self::$filterArr;
-        $nums = count(array_filter($temp, function($v) use ($filterArr) {
-            return isset($filterArr[$v]);
-        }));
-
-        if($nums==0){
-            return false;
-        }
-
-        if($nums != count($t)) return false;
-
         return true;
     }
 
