@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\K3\ETH;
 
 use App\Lib\Game\Method\K3\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 二同号
 class ETH extends Base
@@ -49,35 +50,14 @@ class ETH extends Base
 
     public function regexp($sCodes)
     {
-        if (!preg_match("/^(([1-6]&){0,5}[1-6])\|(([1-6]&){0,5}[1-6])$/", $sCodes)) {
+        $series = '112|122|133|144|155|166|113|223|233|244|255|266|114|224|334|344|355|366|115|225|335|445|455|466|116|226|336|446|556|566';
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(?!\|)(?!.*\|\|$)(?!.*\|$)(('.$series.')\|?)*$/'],// 2同号快三
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        $filterArr = self::$filterArr;
-
-        $aTmp = explode('|', $sCodes);
-        $aDan = explode('&', $aTmp[0]);
-        if (count($aDan) != count(array_filter(array_unique($aDan),function($v) use($filterArr) {
-                return isset($filterArr[$v]);
-            }))) { //不能有重复的号码
-            return false;
-        }
-        $aTuo = explode('&', $aTmp[1]);
-        if (count($aTuo) != count(array_filter(array_unique($aTuo),function($v) use($filterArr) {
-                return isset($filterArr[$v]);
-            }))) { //不能有重复的号码
-            return false;
-        }
-
-        //有重复的
-        if (count(array_intersect($aDan, $aTuo)) > 0) {
-            return false;
-        }
-
-        if(count($aDan)==0 || count($aTuo)==0){
-            return false;
-        }
-
         return true;
     }
 
