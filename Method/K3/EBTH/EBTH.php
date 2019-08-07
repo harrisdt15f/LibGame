@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\K3\EBTH;
 
 use App\Lib\Game\Method\K3\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 二不同号
 class EBTH extends Base
@@ -24,30 +25,14 @@ class EBTH extends Base
 
     public function regexp($sCodes)
     {
-        if (!preg_match("/^(([1-6]&){0,5}[1-6])$/", $sCodes)) {
+        $sequences = '12|13|14|15|16|23|24|25|26|34|35|36|45|46|56';
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(?!\|)(?!.*\|\|$)(?!.*\|$)(('.$sequences.')\|?)*$/'],// 2不同号快三
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        $temp=explode('&',$sCodes);
-        if(count($temp) != count(array_unique($temp))){
-            return 0;
-        }
-
-        $aCode = explode('&',$sCodes);
-
-        $filterArr = self::$filterArr;
-        $nums = count(array_filter($aCode, function($v) use ($filterArr) {
-            return isset($filterArr[$v]);
-        }));
-
-        if($nums==0){
-            return false;
-        }
-
-        if($nums != count($aCode)) {
-            return false;
-        }
-
         return true;
     }
 
