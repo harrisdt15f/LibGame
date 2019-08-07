@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\K3\DTYS;
 
 use App\Lib\Game\Method\K3\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 单挑一筛
 class DTYS extends Base
@@ -26,27 +27,13 @@ class DTYS extends Base
 
     public function regexp($sCodes)
     {
-        // 去重
-        $regexp = '/^(([1-6]&){0,5}[1-6])$/';
-        if(!preg_match($regexp, $sCodes)) {
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^(?!\|)(?!.*\|\|$)(?!.*\|$)(([1-6])\|?){1,6}$/'],//6|5|4|3|2|1 单挑一骰快三
+        ]);
+        if ($validator->fails()) {
             return false;
         }
-
-        $filterArr = self::$filterArr;
-
-
-        $temp = explode('&', $sCodes);
-        if(count($temp) != count(array_filter(array_unique($temp),function($v) use($filterArr) {
-                return isset($filterArr[$v]);
-            }))) {
-            return false;
-        }
-
-        if(count($temp)==0){
-            return false;
-        }
-
-
         return true;
     }
 
