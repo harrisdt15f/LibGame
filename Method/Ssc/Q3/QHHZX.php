@@ -1,5 +1,6 @@
 <?php namespace App\Lib\Game\Method\Ssc\Q3;
 use App\Lib\Game\Method\Ssc\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 前三 混合组选
 class QHHZX extends Base
@@ -51,9 +52,14 @@ class QHHZX extends Base
     // 检测号码是否合法
     public function regexp($sCodes)
     {
-        // 校验
-        $regexp = '/^(([0-9]{3}\,)*[0-9]{3})$/';
-        if( !preg_match($regexp, $sCodes) ) return false;
+        $data['code'] = explode('|', $sCodes);
+        $validator = Validator::make($data, [
+            'code' => 'required|array|max:100000', //只能十万个号码能传过来
+            'code.*' => ['regex:/^((?!\&)(?!.*\&$)(?!.*?\&\&)[\d&]{1,5}?)$/'], //1&2&3
+        ]);
+        if ($validator->fails()) {
+            return false;
+        }
 
         $temp   = explode(",", $sCodes);
         $iNums  = count(array_filter(array_unique($temp)));

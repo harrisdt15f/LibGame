@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\Ssc\EX;
 
 use App\Lib\Game\Method\Ssc\Base;
+use Illuminate\Support\Facades\Validator;
 
 class QZU2_S extends Base
 {
@@ -25,8 +26,12 @@ class QZU2_S extends Base
 
     public function regexp($sCodes)
     {
-        // 格式
-        if (!preg_match("/^(([0-9]{2}\,)*[0-9]{2})$/", $sCodes)) {
+        $data['code'] = explode('|', $sCodes);
+        $validator = Validator::make($data, [
+            'code' => 'required|array|max:100000', //只能十万个号码能传过来
+            'code.*' => ['regex:/^((?!\&)(?!.*\&$)(?!.*?\&\&)[\d&]{1,5}?)$/'], //1&2&3
+        ]);
+        if ($validator->fails()) {
             return false;
         }
 

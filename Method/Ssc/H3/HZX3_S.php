@@ -1,6 +1,7 @@
 <?php namespace App\Lib\Game\Method\Ssc\H3;
 
 use App\Lib\Game\Method\Ssc\Base;
+use Illuminate\Support\Facades\Validator;
 
 // 前直选3 单式
 class HZX3_S extends Base
@@ -41,8 +42,12 @@ class HZX3_S extends Base
 
     public function regexp($sCodes)
     {
-        //格式
-        if (!preg_match("/^(([0-9]{3}\,)*[0-9]{3})$/", $sCodes)) {
+        $data['code'] = explode('|', $sCodes);
+        $validator = Validator::make($data, [
+            'code' => 'required|array|max:100000', //只能十万个号码能传过来
+            'code.*' => ['regex:/^((?!\&)(?!.*\&$)(?!.*?\&\&)[\d&]{1,5}?)$/'], //1&2&3
+        ]);
+        if ($validator->fails()) {
             return false;
         }
 
