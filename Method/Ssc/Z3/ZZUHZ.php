@@ -24,7 +24,7 @@ class ZZUHZ extends Base
     public function regexp($sCodes)
     {
         //去重
-        $t=explode("&",$sCodes);
+        $t=explode("|",$sCodes);
         $temp =array_unique($t);
         $arr = self::$filterArr;
 
