@@ -23,7 +23,7 @@ class LTQ3ZU3_S extends Base
     public function regexp($sCodes)
     {
 
-        $aCode = explode(",", $sCodes);
+        $aCode = explode("|", $sCodes);
 
         //去重
         if(count($aCode) != count(array_filter(array_unique($aCode)))) return false;

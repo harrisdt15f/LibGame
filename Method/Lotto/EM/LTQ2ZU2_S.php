@@ -23,11 +23,11 @@ class LTQ2ZU2_S extends Base
     public function regexp($sCodes)
     {
         //格式
-        if (!preg_match("/^(((0[1-9]\s)|(1[01]\s))((0[1-9])|(1[01]))\,)*(((0[1-9]\s)|(1[01]\s))((0[1-9])|(1[01])))$/", $sCodes)) {
+        if (!preg_match("/^(((0[1-9]\s)|(1[01]\s))((0[1-9])|(1[01]))\|)*(((0[1-9]\s)|(1[01]\s))((0[1-9])|(1[01])))$/", $sCodes)) {
             return false;
         }
 
-        $aCode = explode(",",$sCodes);
+        $aCode = explode("|",$sCodes);
 
         //去重
         if(count($aCode) != count(array_filter(array_unique($aCode)))) return true;
