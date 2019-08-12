@@ -7,7 +7,7 @@ class PKDWD_1 extends Base
 {
     use BasePk10DWD;
 
-    public static $filterArr = array('01' => 1, '02' => 1, '03' => 1, '04' => 1, '05' => 1, '06' => 1, '07' => 1, '08' => 1, '09' => 1, '10' => 1);
+    public static $filterArr = array('1' => 1, '2' => 1, '3' => 1, '4' => 1, '5' => 1, '6' => 1, '7' => 1, '8' => 1, '9' => 1, '10' => 1);
 
     // 供测试用 生成随机投注
     public function randomCodes()
@@ -24,7 +24,7 @@ class PKDWD_1 extends Base
     public function regexp($sCodes)
     {
         // 格式
-        if (!preg_match("/^((0[1-9]&)|(10&)){0,10}((0[1-9])|(10))$/", $sCodes)) {
+        if (!preg_match("/^(([1-9]&)|(10&)){0,10}(([1-9])|(10))$/", $sCodes)) {
             return false;
         }
 

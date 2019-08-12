@@ -22,11 +22,11 @@ class PKQD3_S extends Base
     public function regexp($sCodes)
     {
         //　格式
-        if (!preg_match("/^((0[1-9]\,)|(10\,)){0,10}((0[1-9])|(10))$/", $sCodes)) {
+        if (!preg_match("/^((0[1-9]\|)|(10\|)){0,10}((0[1-9])|(10))$/", $sCodes)) {
             return false;
         }
 
-        $aCode = explode(",", $sCodes);
+        $aCode = explode("|", $sCodes);
 
         //　去重
         if(count($aCode) != count(array_filter(array_unique($aCode)))) return false;
