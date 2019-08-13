@@ -6,7 +6,7 @@ class PKQZX4_S extends Base
 {
     // 01 02 03 04
 
-    public static $filterArr = array('01' => 1, '02' => 1, '03' => 1, '04' => 1, '05' => 1, '06' => 1, '07' => 1, '08' => 1, '09' => 1, '10' => 1);
+    public static $filterArr = ['01' => 1, '02' => 1, '03' => 1, '04' => 1, '05' => 1, '06' => 1, '07' => 1, '08' => 1, '09' => 1, '10' => 1];
 
     //供测试用 生成随机投注
     public function randomCodes()
@@ -28,7 +28,7 @@ class PKQZX4_S extends Base
            return false;
        }
 
-        $aCode = explode("|", $sCodes);
+        $aCode = explode('|', $sCodes);
 
         // 去重
         if (count($aCode) != count(array_filter(array_unique($aCode)))) return false;
@@ -39,7 +39,7 @@ class PKQZX4_S extends Base
                 return false;
             }
 
-            $aTmpCode = explode(" ", $sTmpCode);
+            $aTmpCode = explode(' ', $sTmpCode);
             if (count($aTmpCode) != 4) {
                 return false;
             }
@@ -58,7 +58,7 @@ class PKQZX4_S extends Base
 
     public function count($sCodes)
     {
-        return count(explode(",", $sCodes));
+        return count(explode(',', $sCodes));
     }
 
     //判定中奖

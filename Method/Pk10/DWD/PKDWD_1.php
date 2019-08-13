@@ -7,7 +7,7 @@ class PKDWD_1 extends Base
 {
     use BasePk10DWD;
 
-    public static $filterArr = array('1' => 1, '2' => 1, '3' => 1, '4' => 1, '5' => 1, '6' => 1, '7' => 1, '8' => 1, '9' => 1, '10' => 1);
+    public static $filterArr = ['1' => 1, '2' => 1, '3' => 1, '4' => 1, '5' => 1, '6' => 1, '7' => 1, '8' => 1, '9' => 1, '10' => 1];
 
     // 供测试用 生成随机投注
     public function randomCodes()
@@ -24,15 +24,15 @@ class PKDWD_1 extends Base
     public function regexp($sCodes)
     {
         // 格式
-        if (!preg_match("/^(([1-9]&)|(10&)){0,10}(([1-9])|(10))$/", $sCodes)) {
+        if (!preg_match("/^(([1-9]&)|(10&)){0,9}(([1-9])|(10))$/", $sCodes)) {
             return false;
         }
 
         $filterArr = self::$filterArr;
 
-        $aCode = explode("|", $sCodes);
+        $aCode = explode('|', $sCodes);
         foreach ($aCode as $sCode) {
-            $t = explode("&", $sCode);
+            $t = explode('&', $sCode);
             $iUniqueCount = count(array_filter(array_unique($t), function ($v) use ($filterArr) {
                 return isset($filterArr[$v]);
             }));
@@ -51,7 +51,7 @@ class PKDWD_1 extends Base
 
     public function count($sCodes)
     {
-        return count(explode("&", $sCodes));
+        return count(explode('&', $sCodes));
     }
 
     public function bingoCode(Array $numbers)
