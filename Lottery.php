@@ -111,8 +111,8 @@ class Lottery
     {
 
         $data = [];
-        if (self::_hasCache('method_config')) {
-            $data = self::_getCacheData('method_config');
+        if (self::hasCache('method_config')) {
+            $data = self::getCacheData('method_config');
             if (isset($data[$seriesSign])) {
                 return $data[$seriesSign];
             }
@@ -120,7 +120,7 @@ class Lottery
         $config = include __DIR__ . "/config/method_{$seriesSign}.php";
         if ($config) {
             $data[$seriesSign] = $config;
-            self::_saveCacheData('method_config', $data);
+            self::saveCacheData('method_config', $data);
             return $config;
         }
         return [];
