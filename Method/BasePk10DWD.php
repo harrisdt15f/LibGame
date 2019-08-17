@@ -1,11 +1,13 @@
 <?php
 namespace App\Lib\Game\Method;
 
+use Illuminate\Support\Facades\Validator;
+
 // pk10 定位单胆
 trait BasePk10DWD
 {
     public $positionsTpl = ['1' => '冠军', '2' => '亚军', '3' => '季军', '4' => '第四名', '5' => '第五名'];
-    public $supportExpand = true;
+    public $supportExpand = false;
 
     public function bingoCode(array $numbers)
     {
@@ -40,6 +42,19 @@ trait BasePk10DWD
         }
 
         return implode('|', $positions);
+    }
+
+    public function regexp($sCodes)
+    {
+        $data['code'] = $sCodes;
+        $validator = Validator::make($data, [
+            'code' => ['regex:/^((?!\&)(?!.*\&$)(?!.*?\&\&)(?!.*?\&\|)((([1-9]|[10]))\&?){0,11}\|?){1,5}$/'],
+            //0&1&2&3&4&5&6&7&8&9|0&1&2&3&4&5&6&7&8&9|0&1&2&3&4&5&6&7&8&9|0&1&2&3&4&5&6&7&8&9|0&1&2&3&4&5&6&7&8&9  定位胆
+        ]);
+        if ($validator->fails()) {
+            return false;
+        }
+        return true;
     }
 
     public function expand($sCodes, $pos = null)
