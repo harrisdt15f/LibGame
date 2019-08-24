@@ -23,7 +23,7 @@ class PKQZX2_S extends Base
     public function regexp($sCodes)
     {
         // 格式
-        if (!preg_match("/^(((0[1-9]\s)|(10\s))((0[1-9])|(10))\|)*(((0[1-9]\s)|(10\s))((0[1-9])|(10)))$/", $sCodes)) {
+        if (!preg_match('/^(?!\|)(?!.*\|$)(?!.*?\d\d)([\d]\|?)*$/', $sCodes)) {
             return false;
         }
 
