@@ -5,7 +5,7 @@ use App\Lib\Game\Method\Pk10\Base;
 
 class PKQZX1_S extends Base
 {
-    public static $filterArr = ['01' => 1, '02' => 1, '03' => 1, '04' => 1, '05' => 1, '06' => 1, '07' => 1, '08' => 1, '09' => 1, '10' => 1];
+    public static $filterArr = ['0' => 1, '1' => 1, '2' => 1, '3' => 1, '4' => 1, '5' => 1, '6' => 1, '7' => 1, '8' => 1, '9' => 1];
 
     //　供测试用 生成随机投注
     public function randomCodes()
