@@ -24,7 +24,7 @@ class PKDWD_1 extends Base
     public function regexp($sCodes)
     {
         // 格式
-        if (!preg_match("/^(([1-9]&)|(10&)){0,9}(([1-9])|(10))$/", $sCodes)) {
+        if (!preg_match('/^(((?!\&)(?!.*\&$)(?!.*?\d\d)([\d]?\&?){0,10})\|?){1,5}$/', $sCodes)) {
             return false;
         }
 
