@@ -24,12 +24,10 @@ class PKQZX4_S extends Base
     public function regexp($sCodes)
     {
         //格式
-        if (!preg_match('/^(?!\|)(?!.*\|$)(?!.*?\d\d)([\d]\|?)*$/', $sCodes)) {
-           return false;
-       }
-
+        if (!preg_match('/^(((?!\&)(?!.*\&$)(?!\|)(?!.*\|$)(?!.*?\d\d)([\d]\&?){3})\|?){1,100000}$/', $sCodes)) {
+            return false;
+        }
         $aCode = explode('|', $sCodes);
-
         //　去重
         $unique = array_unique($aCode);
         $filter = array_filter($unique, static function ($value) {
@@ -39,7 +37,6 @@ class PKQZX4_S extends Base
         if (count($aCode) !== $countFilter) {
             return false;
         }
-
         // 校验
         foreach ($aCode as $sTmpCode) {
             if (!preg_match("/^((0[1-9]\s)|(10\s)){3}((0[1-9])|(10))$/", $sTmpCode)) {
