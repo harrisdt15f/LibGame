@@ -25,12 +25,18 @@ class PKQZX1_S extends Base
         if (!preg_match('/^(?!\|)(?!.*\|$)(?!.*?\d\d)([\d]\|?)*$/', $sCodes)) {
             return false;
         }
-
         $aCode = explode('|', $sCodes);
 
         //　去重
-        if(count($aCode) != count(array_filter(array_unique($aCode)))) return false;
-
+        $unique = array_unique($aCode);
+        $filter = array_filter($unique, static function ($value) {
+            return ($value !== null && $value !== false && $value !== '');
+        });
+        $countFilter = count($filter);
+        //　去重
+        if (count($aCode) !== $countFilter) {
+            return false;
+        }
         //　校验
         foreach ($aCode as $_code) {
             if (!isset(self::$filterArr[$_code])) {

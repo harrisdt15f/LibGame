@@ -29,8 +29,16 @@ class PKQZX2_S extends Base
 
         $aCode = explode('|',$sCodes);
 
-        // 去重
-        if(count($aCode) != count(array_filter(array_unique($aCode)))) return false;
+        //　去重
+        $unique = array_unique($aCode);
+        $filter = array_filter($unique, static function ($value) {
+            return ($value !== null && $value !== false && $value !== '');
+        });
+        $countFilter = count($filter);
+        //　去重
+        if (count($aCode) !== $countFilter) {
+            return false;
+        }
 
         // 校验
         foreach ($aCode as $sTmpCode) {

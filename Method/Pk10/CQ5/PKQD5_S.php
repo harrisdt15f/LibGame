@@ -5,7 +5,18 @@ use App\Lib\Game\Method\Pk10\Base;
 class PKQD5_S extends Base
 {
 
-    public static $filterArr = ['0' => 1, '1' => 1, '2' => 1, '3' => 1, '4' => 1, '5' => 1, '6' => 1, '7' => 1, '8' => 1, '9' => 1];
+    public static $filterArr = [
+        '0' => 1,
+        '1' => 1,
+        '2' => 1,
+        '3' => 1,
+        '4' => 1,
+        '5' => 1,
+        '6' => 1,
+        '7' => 1,
+        '8' => 1,
+        '9' => 1
+    ];
 
     // 供测试用 生成随机投注
     public function randomCodes()
@@ -25,19 +36,22 @@ class PKQD5_S extends Base
         if (!preg_match('/^(?!\|)(?!.*\|$)(?!.*?\d\d)([\d]\|?)*$/', $sCodes)) {
             return false;
         }
-
         $aCode = explode('|', $sCodes);
-
+        $unique = array_unique($aCode);
+        $filter = array_filter($unique, static function ($value) {
+            return ($value !== null && $value !== false && $value !== '');
+        });
+        $countFilter = count($filter);
         //　去重
-        if(count($aCode) != count(array_filter(array_unique($aCode)))) return false;
-
+        if (count($aCode) !== $countFilter) {
+            return false;
+        }
         //　校验
         foreach ($aCode as $_code) {
             if (!isset(self::$filterArr[$_code])) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -49,7 +63,7 @@ class PKQD5_S extends Base
     public function bingoCode(Array $numbers)
     {
         $result = [];
-        $arr    = array_keys(self::$filterArr);
+        $arr = array_keys(self::$filterArr);
 
         foreach ($numbers as $pos => $code) {
             $tmp = [];
