@@ -6,7 +6,7 @@ class PKQZX4_S extends Base
 {
     // 01 02 03 04
 
-    public static $filterArr = ['01' => 1, '02' => 1, '03' => 1, '04' => 1, '05' => 1, '06' => 1, '07' => 1, '08' => 1, '09' => 1, '10' => 1];
+    public static $filterArr = ['0' => 1, '1' => 1, '2' => 1, '3' => 1, '4' => 1, '5' => 1, '6' => 1, '7' => 1, '8' => 1, '9' => 1];
 
     //供测试用 生成随机投注
     public function randomCodes()
@@ -24,15 +24,19 @@ class PKQZX4_S extends Base
     public function regexp($sCodes)
     {
         //格式
-       if (!preg_match("/^(((0[1-9]\s)|(10\s)){3}((0[1-9])|(10))\|)*(((0[1-9]\s)|(10\s)){3}((0[1-9])|(10)))$/", $sCodes)) {
-           return false;
-       }
-
+        if (!preg_match('/^(((?!\&)(?!.*\&$)(?!\|)(?!.*\|$)(?!.*?\d\d)([\d]\&?){3})\|?){1,100000}$/', $sCodes)) {
+            return false;
+        }
         $aCode = explode('|', $sCodes);
-
-        // 去重
-        if (count($aCode) != count(array_filter(array_unique($aCode)))) return false;
-
+        //　去重
+        $unique = array_unique($aCode);
+        $filter = array_filter($unique, static function ($value) {
+            return ($value !== null && $value !== false && $value !== '');
+        });
+        $countFilter = count($filter);
+        if (count($aCode) !== $countFilter) {
+            return false;
+        }
         // 校验
         foreach ($aCode as $sTmpCode) {
             if (!preg_match("/^((0[1-9]\s)|(10\s)){3}((0[1-9])|(10))$/", $sTmpCode)) {
