@@ -20,11 +20,11 @@ class Lottery
 
     /**
      * 获取彩种详情 - 包含玩法数据
-     * @param $lotterySign
+     * @param  string $lotterySign
      * @return mixed
      * @throws \Exception
      */
-    public static function getLottery($lotterySign)
+    public static function getLottery(string $lotterySign)
     {
         $id = strtolower($lotterySign);
 
@@ -78,13 +78,13 @@ class Lottery
 
     /**
      * 获取 [系列] 玩法 对象
-     * @param $series
-     * @param $group
-     * @param $methodId
+     * @param  string $series
+     * @param  string $group
+     * @param  string $methodId
      * @return mixed
      * @throws \Exception
      */
-    public static function getMethodObject($series, $group, $methodId)
+    public static function getMethodObject(string $series, string $group, string $methodId)
     {
         // 获取配置
         $config = self::getMethodConfig($series, $methodId);
@@ -103,16 +103,14 @@ class Lottery
 
     /**
      * 获取 [系列] 玩法 的配置
-     * @param $seriesSign
+     * @param  string $seriesSign
      * @return mixed
-     * @throws
      */
-    public static function getAllMethodConfig($seriesSign)
+    public static function getAllMethodConfig(string $seriesSign)
     {
-
         $data = [];
-        if (self::hasCache('method_config')) {
-            $data = self::getCacheData('method_config');
+        if (self::hasTagsCache('method_config')) {
+            $data = self::getTagsCacheData('method_config');
             if (isset($data[$seriesSign])) {
                 return $data[$seriesSign];
             }
@@ -120,18 +118,18 @@ class Lottery
         $config = include __DIR__ . "/config/method_{$seriesSign}.php";
         if ($config) {
             $data[$seriesSign] = $config;
-            self::saveCacheData('method_config', $data);
+            self::saveTagsCacheData('method_config', $data);
             return $config;
         }
         return [];
     }
     /**
      * 获取 [指定] 玩法 的配置
-     * @param $seriesSign
-     * @param $methodSign
+     * @param  string $seriesSign
+     * @param  string $methodSign
      * @return array
      */
-    public static function getMethodConfig($seriesSign, $methodSign)
+    public static function getMethodConfig(string $seriesSign, string $methodSign)
     {
         $allConfig = self::getAllMethodConfig($seriesSign);
         return $allConfig[$methodSign] ?? [];
